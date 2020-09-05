@@ -1,0 +1,24 @@
+{
+  "name": "gophercises",
+  "version": "1.0.0",
+  "description": "Implementations of Gophercises (https://github.com/gophercises).",
+  "main": "main.go",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MichaelZalla/gophercises.git"
+  },
+  "keywords": [
+    "go",
+    "gopher",
+    "gophercise"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MichaelZalla/gophercises/issues"
+  },
+  "homepage": "https://github.com/MichaelZalla/gophercises#readme"
+}

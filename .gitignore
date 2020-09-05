@@ -1,0 +1,15 @@
+# Excludes binaries
+*
+!/**/
+!*.*
+
+# Excludes program data files
+*.txt
+gopher.json
+
+# Excludes program outputs
+*.xml
+*.log
+
+# Excludes database files
+*.db

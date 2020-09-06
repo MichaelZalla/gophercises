@@ -1,14 +1,10 @@
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
-	"log"
 	"strings"
 
-	"github.com/MichaelZalla/gophercises/07-task/task/convert"
 	"github.com/MichaelZalla/gophercises/07-task/task/todo"
-	bolt "go.etcd.io/bbolt"
 
 	"github.com/spf13/cobra"
 )
@@ -19,48 +15,15 @@ var addCmd = &cobra.Command{
 	Short: "Add a new task to your TODO list",
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		todo := todo.Todo{
-			Description: strings.Join(args, " "),
-			Completed:   0,
-		}
+		desc := strings.Join(args, " ")
 
-		todoBytes, err := json.Marshal(todo)
+		todos, err := todo.Create(desc)
 
 		if err != nil {
 			return err
 		}
 
-		db, err := newWriter()
-
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		defer db.Close()
-
-		err = db.Update(func(tx *bolt.Tx) error {
-
-			b := tx.Bucket(tasksBucket)
-
-			if b == nil {
-				return fmt.Errorf("failed to find bucket '%s'", tasksBucket)
-			}
-
-			todoID, err := b.NextSequence()
-
-			if err != nil {
-				return err
-			}
-
-			return b.Put(convert.IntToBytes(int(todoID)), todoBytes)
-
-		})
-
-		if err != nil {
-			return err
-		}
-
-		fmt.Printf("Added \"%s\" to your task list.\n", todo.Description)
+		fmt.Printf("Added \"%s\" to your task list.\n", todos[0].Description)
 
 		return nil
 

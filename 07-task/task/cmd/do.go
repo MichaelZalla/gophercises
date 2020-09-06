@@ -1,15 +1,12 @@
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
-	"log"
 	"strconv"
 	"time"
 
 	"github.com/MichaelZalla/gophercises/07-task/task/todo"
 	"github.com/spf13/cobra"
-	bolt "go.etcd.io/bbolt"
 )
 
 // doCmd represents the do command
@@ -18,67 +15,31 @@ var doCmd = &cobra.Command{
 	Short: "Mark a task on your TODO list as completed",
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		target, err := strconv.ParseInt(args[0], 10, 0)
+		key, err := strconv.Atoi(args[0])
 
 		if err != nil {
-			return fmt.Errorf("failed to parse task index from '%s'", args[0])
+			return fmt.Errorf("failed to parse key from '%s'", args[0])
 		}
 
-		var result todo.Todo
+		markAsCompleted := func(t *todo.Todo) error {
 
-		db, err := newWriter()
+			if t.IsComplete() {
+				return fmt.Errorf("task '%s' has already been done", t.Description)
+			}
 
-		if err != nil {
-			log.Fatal(err)
+			t.Completed = time.Now().Unix()
+
+			return nil
+
 		}
 
-		err = db.Update(func(tx *bolt.Tx) error {
-
-			var todo todo.Todo
-
-			b := tx.Bucket(tasksBucket)
-
-			c := b.Cursor()
-
-			k, v := c.First()
-
-			for index := int64(0); index < target; index++ {
-				k, v = c.Next()
-			}
-
-			if k == nil {
-				return fmt.Errorf("no task at index '%d'", target)
-			}
-
-			err := json.Unmarshal(v, &todo)
-
-			if err != nil {
-				return err
-			}
-
-			result = todo
-
-			if todo.IsComplete() {
-				return fmt.Errorf("task '%s' has already been done", todo.Description)
-			}
-
-			todo.Completed = time.Now().Unix()
-
-			v, err = json.Marshal(todo)
-
-			if err != nil {
-				return err
-			}
-
-			return b.Put(k, v)
-
-		})
+		todos, err := todo.Update(key, markAsCompleted)
 
 		if err != nil {
 			return err
 		}
 
-		fmt.Printf("You have completed the \"%s\" task.\n", result.Description)
+		fmt.Printf("You have completed the \"%s\" task.\n", todos[0].Description)
 
 		return nil
 

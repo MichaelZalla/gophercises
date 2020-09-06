@@ -1,14 +1,11 @@
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
-	"log"
-	"strings"
+	"strconv"
 
 	"github.com/MichaelZalla/gophercises/07-task/task/todo"
 	"github.com/spf13/cobra"
-	bolt "go.etcd.io/bbolt"
 )
 
 // rmCmd represents the rm command
@@ -17,45 +14,19 @@ var rmCmd = &cobra.Command{
 	Short: "Remove a new task to your TODO list",
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		desc := strings.Join(args, " ")
-
-		db, err := newWriter()
+		key, err := strconv.Atoi(args[0])
 
 		if err != nil {
-			log.Fatal(err)
+			return fmt.Errorf("failed to parse key from '%s'", args[0])
 		}
 
-		err = db.Update(func(tx *bolt.Tx) error {
-
-			var todo todo.Todo
-
-			b := tx.Bucket(tasksBucket)
-
-			c := b.Cursor()
-
-			for k, v := c.First(); k != nil; k, v = c.Next() {
-
-				err := json.Unmarshal(v, &todo)
-
-				if err != nil {
-					return err
-				}
-
-				if todo.Description == desc {
-					return b.Delete(k)
-				}
-
-			}
-
-			return fmt.Errorf("task '%s' does not exist", desc)
-
-		})
+		err = todo.Delete(key)
 
 		if err != nil {
 			return err
 		}
 
-		fmt.Printf("You have removed the \"%s\" task.\n", desc)
+		fmt.Printf("You have removed the task with key %d.\n", key)
 
 		return nil
 

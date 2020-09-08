@@ -137,17 +137,17 @@ func Sorted(getLessFn LessFnGetter) FilterFn {
 
 }
 
+var shuffleRandSource = rand.New(rand.NewSource(time.Now().Unix()))
+
 // Shuffled will shuffle a deck randomly. Shuffle returns the deck that is
 // passed to it. Shuffle uses its own rand.Source.
 func Shuffled() FilterFn {
 
 	return func(deck []Card) []Card {
 
-		source := rand.New(rand.NewSource(time.Now().Unix()))
-
 		shuffled := make([]Card, len(deck))
 
-		p := source.Perm(len(deck))
+		p := shuffleRandSource.Perm(len(deck))
 
 		for i, j := range p {
 			shuffled[i] = deck[j]

@@ -1,6 +1,9 @@
 package deck
 
-import "fmt"
+import (
+	"fmt"
+	"math/rand"
+)
 
 func ExampleNew() {
 
@@ -173,16 +176,30 @@ func ExampleSorted() {
 
 func ExampleShuffled() {
 
+	shuffleRandSource := rand.New(rand.NewSource(0))
+
 	normalDeck := New(WithStandard())
+
+	js := shuffleRandSource.Perm(len(normalDeck))
 
 	shuffledDeck := New(Concat(normalDeck), Shuffled())
 
 	fmt.Println(len(shuffledDeck) == len(normalDeck))
 
-	// fmt.Println(shuffled[0])
-	// fmt.Println(shuffled[len(shuffled)-1])
+	fmt.Println(shuffledDeck[0] == normalDeck[js[0]])
+	fmt.Println(shuffledDeck[1] == normalDeck[js[1]])
+	fmt.Println(shuffledDeck[2] == normalDeck[js[2]])
+	fmt.Println(shuffledDeck[3] == normalDeck[js[3]])
+	fmt.Println(shuffledDeck[len(js)] == normalDeck[js[len(js)]])
 
 	// Output:
+
+	// true
+
+	// true
+	// true
+	// true
+	// true
 	// true
 
 }

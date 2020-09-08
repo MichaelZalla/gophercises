@@ -48,23 +48,17 @@ func WithStandard() Filter {
 
 }
 
-// WithoutCards takes a deck and returns a new deck in which any matching cards
-// in cardsToRemove have been removed.
-func WithoutCards(cardsToRemove []Card) Filter {
+// WithoutCards takes a filter function and returns a new deck in which any
+// original cards matching the filter are removed.
+func WithoutCards(filterFn func(c Card) bool) Filter {
 
 	return func(deck []Card) []Card {
 
 		filtered := []Card{}
 
-		for i := 0; i < len(deck); i++ {
-			keep := true
-			for _, c := range cardsToRemove {
-				if deck[i].Suit == c.Suit && deck[i].Rank == c.Rank {
-					keep = false
-				}
-			}
-			if keep {
-				filtered = append(filtered, deck[i])
+		for _, card := range deck {
+			if !filterFn(card) {
+				filtered = append(filtered, card)
 			}
 		}
 

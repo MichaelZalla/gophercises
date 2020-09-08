@@ -34,21 +34,24 @@ func ExampleWithStandard() {
 
 func ExampleWithoutCards() {
 
-	deck := New(
+	faceCards := New(
 		WithStandard(),
-		WithoutCards([]Card{
-			Card{Suit: Hearts, Rank: King},
-			Card{Suit: Spades, Rank: Ace},
+		WithoutCards(func(c Card) bool {
+			return c.Rank >= Two && c.Rank <= Ten
 		}))
 
-	fmt.Println(len(deck))
-	fmt.Println(deck[0])
-	fmt.Println(deck[len(deck)-1])
+	fmt.Println(len(faceCards))
+	fmt.Println(faceCards[0])
+	fmt.Println(faceCards[1])
+	fmt.Println(faceCards[len(faceCards)-2])
+	fmt.Println(faceCards[len(faceCards)-1])
 
 	// Output:
-	// 50
-	// Two of Spades
+	// 16
+	// Ace of Spades
+	// Jack of Spades
 	// Queen of Hearts
+	// King of Hearts
 
 }
 

@@ -1,12 +1,13 @@
 package deck
 
 // Rank represents the value of a card within its suit.
-type Rank int
+type Rank uint8
 
 // Enumeration of ranks in order of appearance in a newly minted deck.
 //go:generate stringer -type=Rank
 const (
-	Ace Rank = iota
+	_ Rank = iota
+	Ace
 	Two
 	Three
 	Four

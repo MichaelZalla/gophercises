@@ -8,19 +8,19 @@ func _() {
 	// An "invalid array index" compiler error signifies that the constant values have changed.
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
-	_ = x[Ace-0]
-	_ = x[Two-1]
-	_ = x[Three-2]
-	_ = x[Four-3]
-	_ = x[Five-4]
-	_ = x[Six-5]
-	_ = x[Seven-6]
-	_ = x[Eight-7]
-	_ = x[Nine-8]
-	_ = x[Ten-9]
-	_ = x[Jack-10]
-	_ = x[Queen-11]
-	_ = x[King-12]
+	_ = x[Ace-1]
+	_ = x[Two-2]
+	_ = x[Three-3]
+	_ = x[Four-4]
+	_ = x[Five-5]
+	_ = x[Six-6]
+	_ = x[Seven-7]
+	_ = x[Eight-8]
+	_ = x[Nine-9]
+	_ = x[Ten-10]
+	_ = x[Jack-11]
+	_ = x[Queen-12]
+	_ = x[King-13]
 }
 
 const _Rank_name = "AceTwoThreeFourFiveSixSevenEightNineTenJackQueenKing"
@@ -28,8 +28,9 @@ const _Rank_name = "AceTwoThreeFourFiveSixSevenEightNineTenJackQueenKing"
 var _Rank_index = [...]uint8{0, 3, 6, 11, 15, 19, 22, 27, 32, 36, 39, 43, 48, 52}
 
 func (i Rank) String() string {
-	if i < 0 || i >= Rank(len(_Rank_index)-1) {
-		return "Rank(" + strconv.FormatInt(int64(i), 10) + ")"
+	i -= 1
+	if i >= Rank(len(_Rank_index)-1) {
+		return "Rank(" + strconv.FormatInt(int64(i+1), 10) + ")"
 	}
 	return _Rank_name[_Rank_index[i]:_Rank_index[i+1]]
 }

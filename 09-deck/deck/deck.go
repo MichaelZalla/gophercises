@@ -3,6 +3,7 @@ package deck
 import (
 	"math/rand"
 	"sort"
+	"time"
 )
 
 // Filter allows the caller to create a new deck from an exisitng deck.
@@ -126,16 +127,22 @@ func Sorted(getLessFn LessFnGetter) Filter {
 }
 
 // Shuffled will shuffle a deck randomly. Shuffle returns the deck that is
-// passed to it. Shuffle does not call rand.Seed().
+// passed to it. Shuffle uses its own rand.Source.
 func Shuffled() Filter {
 
 	return func(deck []Card) []Card {
 
-		rand.Shuffle(len(deck), func(i, j int) {
-			deck[i], deck[j] = deck[j], deck[i]
-		})
+		source := rand.New(rand.NewSource(time.Now().Unix()))
 
-		return deck
+		shuffled := make([]Card, len(deck))
+
+		p := source.Perm(len(deck))
+
+		for i, j := range p {
+			shuffled[i] = deck[j]
+		}
+
+		return shuffled
 
 	}
 

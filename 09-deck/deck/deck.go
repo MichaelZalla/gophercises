@@ -6,12 +6,12 @@ import (
 	"time"
 )
 
-// Filter allows the caller to create a new deck from an exisitng deck.
-type Filter = func([]Card) []Card
+// FilterFn allows the caller to create a new deck from an exisitng deck.
+type FilterFn = func([]Card) []Card
 
 // New generates an empty deck and applies all filters to the deck. If
 // no filters are passed, New defaults to using the WithStandard filter.
-func New(filters ...Filter) []Card {
+func New(filters ...FilterFn) []Card {
 
 	d := []Card{}
 
@@ -28,7 +28,7 @@ func New(filters ...Filter) []Card {
 }
 
 // WithStandard combines a deck with a standard 52-card deck.
-func WithStandard() Filter {
+func WithStandard() FilterFn {
 
 	return func(deck []Card) []Card {
 
@@ -50,7 +50,7 @@ func WithStandard() Filter {
 
 // WithoutCards takes a filter function and returns a new deck in which any
 // original cards matching the filter are removed.
-func WithoutCards(filterFn func(c Card) bool) Filter {
+func WithoutCards(filterFn func(c Card) bool) FilterFn {
 
 	return func(deck []Card) []Card {
 
@@ -69,7 +69,7 @@ func WithoutCards(filterFn func(c Card) bool) Filter {
 }
 
 // WithJokers combines a deck with some number of new Joker cards.
-func WithJokers(n int) Filter {
+func WithJokers(n int) FilterFn {
 
 	return func(deck []Card) []Card {
 
@@ -86,8 +86,8 @@ func WithJokers(n int) Filter {
 
 }
 
-// WithDecks combines a deck with a set of existing decks.
-func WithDecks(decks ...[]Card) Filter {
+// Concat combines a deck with a set of existing decks.
+func Concat(decks ...[]Card) FilterFn {
 
 	return func(deck []Card) []Card {
 
@@ -104,7 +104,7 @@ func WithDecks(decks ...[]Card) Filter {
 // Sorted takes a deck and performs an in-place sort specified by sortFn. If no
 // sortFn is passed, Sorted() will use a default sort function that sorts a deck
 // by Rank and Suit. Sorted returns the deck that is passed to it.
-func Sorted(getLessFn LessFnGetter) Filter {
+func Sorted(getLessFn LessFnGetter) FilterFn {
 
 	if getLessFn == nil {
 		getLessFn = defaultLessFnGetter
@@ -122,7 +122,7 @@ func Sorted(getLessFn LessFnGetter) Filter {
 
 // Shuffled will shuffle a deck randomly. Shuffle returns the deck that is
 // passed to it. Shuffle uses its own rand.Source.
-func Shuffled() Filter {
+func Shuffled() FilterFn {
 
 	return func(deck []Card) []Card {
 

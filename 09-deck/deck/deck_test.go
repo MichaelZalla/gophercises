@@ -87,14 +87,14 @@ func ExampleWithJokers() {
 
 }
 
-func ExampleWithDecks() {
+func ExampleConcat() {
 
 	otherDecks := [][]Card{{}, {}}
 
 	otherDecks[0] = New(WithStandard())
 	otherDecks[1] = New(WithJokers(2))
 
-	deck := New(WithDecks(otherDecks...))
+	deck := New(Concat(otherDecks...))
 
 	fmt.Println(len(deck) == len(otherDecks[0])+len(otherDecks[1]))
 	fmt.Println(deck[0])
@@ -113,7 +113,7 @@ func ExampleSorted() {
 
 	normalDeck := New(WithStandard())
 
-	reverseDeck := New(WithDecks(normalDeck), Sorted(func(deck []Card) LessFn {
+	reverseDeck := New(Concat(normalDeck), Sorted(func(deck []Card) LessFn {
 		return func(i, j int) bool {
 			return deck[i].order() > deck[j].order()
 		}
@@ -140,7 +140,7 @@ func ExampleShuffled() {
 
 	normalDeck := New(WithStandard())
 
-	shuffledDeck := New(WithDecks(normalDeck), Shuffled())
+	shuffledDeck := New(Concat(normalDeck), Shuffled())
 
 	fmt.Println(len(shuffledDeck) == len(normalDeck))
 

@@ -2,11 +2,11 @@ package blackjack
 
 import "github.com/MichaelZalla/gophercises/09-deck/deck"
 
-func hasAce(p *Player) bool {
+func hasAce(p *player) bool {
 	return (p.Hand[0].Rank == deck.Ace || p.Hand[1].Rank == deck.Ace)
 }
 
-func getScore(p *Player) int {
+func getScore(p *player) int {
 
 	soft := false
 

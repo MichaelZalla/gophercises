@@ -7,20 +7,20 @@ import (
 	"github.com/MichaelZalla/gophercises/09-deck/deck"
 )
 
-// Round stores information about a particular game round, including the winners
-type Round struct {
+// round stores information about a particular game round, including the winners
+type round struct {
 	Winners  []int
 	TopScore int
 }
 
 // Game stores all information related to the current Blackjack game
 type Game struct {
-	Dealer       *Player
-	Players      []*Player
+	Dealer       *player
+	Players      []*player
 	Deck         []deck.Card
 	CurrentRound int
 	Rounds       int
-	History      []Round
+	History      []round
 }
 
 // GameOptionFn allows callers to customize a game (i.e., when calling NewGame)
@@ -36,7 +36,7 @@ func NewGame(options ...GameOptionFn) Game {
 	// Generate a Deck and a Dealer (who serves as Player 0)
 
 	game := Game{
-		Dealer: &Player{
+		Dealer: &player{
 			ID:     0,
 			Dealer: true,
 		},
@@ -84,7 +84,7 @@ func Players(n int) func(game Game) Game {
 
 		// @NOTE(mzalla) Reserves 0 for Dealer's ID
 		for i := 1; i < n+1; i++ {
-			game.Players = append(game.Players, &Player{
+			game.Players = append(game.Players, &player{
 				ID: i,
 			})
 		}
@@ -146,7 +146,7 @@ func playRound(game *Game) {
 
 	// Record the round history
 
-	game.History = append(game.History, Round{
+	game.History = append(game.History, round{
 		Winners:  winnerIDs,
 		TopScore: topScore,
 	})
@@ -160,7 +160,7 @@ func playRound(game *Game) {
 
 }
 
-func deal(game *Game, player *Player, n int) {
+func deal(game *Game, p *player, n int) {
 
 	if len(game.Deck) < n {
 		log.Fatal("Called deal() on deck with too few cards!")
@@ -168,15 +168,15 @@ func deal(game *Game, player *Player, n int) {
 
 	for i := 0; i < n; i++ {
 		front, back := game.Deck[0:n], game.Deck[n:]
-		player.Hand = append(player.Hand, front...)
+		p.Hand = append(p.Hand, front...)
 		game.Deck = back
 	}
 
 }
 
-func getRoundWinners(game *Game) ([]*Player, int) {
+func getRoundWinners(game *Game) ([]*player, int) {
 
-	var winners []*Player
+	var winners []*player
 
 	// Check whether any players were dealt Blackjack (ignores the Dealer)
 
@@ -208,7 +208,7 @@ func getRoundWinners(game *Game) ([]*Player, int) {
 	// If all players went bust that round, Dealer wins!
 
 	if sumPlayerScoreAfterRound == 0 {
-		return []*Player{game.Dealer}, getScore(game.Dealer)
+		return []*player{game.Dealer}, getScore(game.Dealer)
 	}
 
 	// Dealer plays a turn
@@ -236,7 +236,7 @@ func getRoundWinners(game *Game) ([]*Player, int) {
 
 }
 
-func playTurnAsPlayer(game *Game, p *Player) int {
+func playTurnAsPlayer(game *Game, p *player) int {
 
 	fmt.Printf("%s's turn...\n", p)
 
@@ -280,7 +280,7 @@ func playTurnAsPlayer(game *Game, p *Player) int {
 
 }
 
-func playTurnAsDealer(game *Game, d *Player) int {
+func playTurnAsDealer(game *Game, d *player) int {
 
 	fmt.Printf("%s's turn...\n", d)
 

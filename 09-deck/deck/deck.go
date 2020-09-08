@@ -101,6 +101,23 @@ func Concat(decks ...[]Card) FilterFn {
 
 }
 
+// WithCopies multiplies a deck n times.
+func WithCopies(n int) FilterFn {
+
+	return func(deck []Card) []Card {
+
+		var copies []Card
+
+		for i := 0; i < n; i++ {
+			copies = append(copies, deck...)
+		}
+
+		return copies
+
+	}
+
+}
+
 // Sorted takes a deck and performs an in-place sort specified by sortFn. If no
 // sortFn is passed, Sorted() will use a default sort function that sorts a deck
 // by Rank and Suit. Sorted returns the deck that is passed to it.

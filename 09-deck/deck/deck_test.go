@@ -109,6 +109,41 @@ func ExampleConcat() {
 
 }
 
+func ExampleWithCopies() {
+
+	standard := New()
+
+	deck := New(Concat(standard), WithCopies(3))
+
+	fmt.Println(len(deck) == len(standard)*3)
+
+	// First card in each copy
+	fmt.Println(deck[0] == deck[52])
+	fmt.Println(deck[52] == deck[104])
+
+	// Second card in each copy
+	fmt.Println(deck[1] == deck[53])
+	fmt.Println(deck[53] == deck[105])
+
+	// Last card in each copy
+	fmt.Println(deck[51] == deck[103])
+	fmt.Println(deck[103] == deck[155])
+
+	// Output:
+
+	// true
+
+	// true
+	// true
+
+	// true
+	// true
+
+	// true
+	// true
+
+}
+
 func ExampleSorted() {
 
 	normalDeck := New(WithStandard())

@@ -7,11 +7,20 @@ import (
 	"github.com/MichaelZalla/gophercises/09-deck/deck"
 )
 
+// Round stores information about a particular game round, including the winners
+type Round struct {
+	Winners  []int
+	TopScore int
+}
+
 // Game stores all information related to the current Blackjack game
 type Game struct {
-	Dealer  *Player
-	Players []*Player
-	Deck    []deck.Card
+	Dealer       *Player
+	Players      []*Player
+	Deck         []deck.Card
+	CurrentRound int
+	Rounds       int
+	History      []Round
 }
 
 // GameOptionFn allows callers to customize a game (i.e., when calling NewGame)
@@ -22,18 +31,17 @@ const maxScore = 21
 const dealerSoftHitLimit = 17
 
 // NewGame creates a new game of Blackjack
-func NewGame(options ...GameOptionFn) (*Game, []*Player) {
+func NewGame(options ...GameOptionFn) Game {
 
 	// Generate a Deck and a Dealer (who serves as Player 0)
 
 	game := Game{
-		Deck: deck.New(
-			deck.WithStandard(),
-			deck.Shuffled()),
 		Dealer: &Player{
 			ID:     0,
 			Dealer: true,
 		},
+		Rounds:       1,
+		CurrentRound: 1,
 	}
 
 	// Add Players, etc
@@ -46,17 +54,26 @@ func NewGame(options ...GameOptionFn) (*Game, []*Player) {
 
 	game.Players = append(game.Players, game.Dealer)
 
-	// Deal a hand to each player
+	// Play out all of the rounds, keeping a history of the round winners
 
-	for i := 0; i < 2; i++ {
-		for j := 0; j < len(game.Players); j++ {
-			deal(&game, game.Players[j], 1)
-		}
+	for game.CurrentRound <= game.Rounds {
+		playRound(&game)
+		game.CurrentRound++
 	}
 
-	// NewGame blocks until getWinners returns
+	// Display game summary
 
-	return &game, getWinners(&game)
+	fmt.Printf("\n==========================================\n")
+	fmt.Printf("\tGame Summary\n")
+	fmt.Printf("==========================================\n\n")
+
+	for i, r := range game.History {
+		fmt.Printf("Winner IDs for Round %d: %v (top score: %d)\n", i+1, r.Winners, r.TopScore)
+	}
+
+	// Return the completed game
+
+	return game
 
 }
 
@@ -78,6 +95,71 @@ func Players(n int) func(game Game) Game {
 
 }
 
+// Rounds sets a limit on the number of rounds to be played as part of the game
+func Rounds(n int) func(game Game) Game {
+
+	return func(game Game) Game {
+
+		if n > 0 {
+			game.Rounds = n
+		}
+
+		return game
+
+	}
+
+}
+
+func playRound(game *Game) {
+
+	// Reset the deck, and all player hands
+
+	game.Deck = deck.New(
+		deck.WithStandard(),
+		deck.Shuffled())
+
+	for _, p := range game.Players {
+		p.Hand = []deck.Card{}
+	}
+
+	// Deal a hand to each player
+
+	for i := 0; i < 2; i++ {
+		for j := 0; j < len(game.Players); j++ {
+			deal(game, game.Players[j], 1)
+		}
+	}
+
+	// NewGame blocks until getRoundWinners returns
+
+	fmt.Printf("\n==========================================\n")
+	fmt.Printf("\tStarting round #%d\n", game.CurrentRound)
+	fmt.Printf("==========================================\n\n")
+
+	winners, topScore := getRoundWinners(game)
+
+	var winnerIDs []int
+
+	for _, p := range winners {
+		winnerIDs = append(winnerIDs, p.ID)
+	}
+
+	// Record the round history
+
+	game.History = append(game.History, Round{
+		Winners:  winnerIDs,
+		TopScore: topScore,
+	})
+
+	// Print a summary of the round
+
+	fmt.Printf("Round winners (top score: %d):\n", topScore)
+	for _, p := range winners {
+		fmt.Printf("\t%s\n", p)
+	}
+
+}
+
 func deal(game *Game, player *Player, n int) {
 
 	if len(game.Deck) < n {
@@ -92,7 +174,7 @@ func deal(game *Game, player *Player, n int) {
 
 }
 
-func getWinners(game *Game) []*Player {
+func getRoundWinners(game *Game) ([]*Player, int) {
 
 	var winners []*Player
 
@@ -109,7 +191,7 @@ func getWinners(game *Game) []*Player {
 	}
 
 	if len(winners) > 0 {
-		return winners
+		return winners, maxScore
 	}
 
 	// Otherwise, each player (besides the Dealer) plays a turn
@@ -126,7 +208,7 @@ func getWinners(game *Game) []*Player {
 	// If all players went bust that round, Dealer wins!
 
 	if sumPlayerScoreAfterRound == 0 {
-		return []*Player{game.Dealer}
+		return []*Player{game.Dealer}, getScore(game.Dealer)
 	}
 
 	// Dealer plays a turn
@@ -150,7 +232,7 @@ func getWinners(game *Game) []*Player {
 		}
 	}
 
-	return winners
+	return winners, topScore
 
 }
 

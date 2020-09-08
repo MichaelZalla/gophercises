@@ -29,24 +29,12 @@ func (cs cardSorter) Less(i, j int) bool {
 	return cs.byFn(&cs.deck[i], &cs.deck[j])
 }
 
+func order(c Card) int {
+	return int(c.Suit)*int(maxRank) + int(c.Rank)
+}
+
 func defaultSort(i, j *Card) bool {
 
-	if i.Suit < j.Suit {
-		return true
-	}
-
-	if i.Suit > j.Suit {
-		return false
-	}
-
-	if i.Rank < j.Rank {
-		return true
-	}
-
-	if i.Rank > j.Rank {
-		return false
-	}
-
-	return true
+	return order(*i) < order(*j)
 
 }

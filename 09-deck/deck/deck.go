@@ -2,6 +2,7 @@ package deck
 
 import (
 	"math/rand"
+	"sort"
 )
 
 // Filter allows the caller to create a new deck from an exisitng deck.
@@ -108,15 +109,15 @@ func WithDecks(decks ...[]Card) Filter {
 // Sorted takes a deck and performs an in-place sort specified by sortFn. If no
 // sortFn is passed, Sorted() will use a default sort function that sorts a deck
 // by Rank and Suit. Sorted returns the deck that is passed to it.
-func Sorted(sortFn func(i, j *Card) bool) Filter {
+func Sorted(getLessFn LessFnGetter) Filter {
 
-	if sortFn == nil {
-		sortFn = defaultSort
+	if getLessFn == nil {
+		getLessFn = defaultLessFnGetter
 	}
 
 	return func(deck []Card) []Card {
 
-		by(sortFn).sort(deck)
+		sort.Slice(deck, getLessFn(deck))
 
 		return deck
 

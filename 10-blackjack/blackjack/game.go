@@ -25,7 +25,12 @@ type Game struct {
 // GameOptionFn allows callers to customize a game (i.e., when calling NewGame)
 type GameOptionFn func(game Game) Game
 
+const dealerID = 0
+
+const minPlayerID = 1
+
 const maxScore = 21
+const bustScore = -1
 
 const dealerSoftHitLimit = 17
 
@@ -36,7 +41,7 @@ func NewGame(options ...GameOptionFn) Game {
 
 	game := Game{
 		Dealer: &player{
-			ID:     0,
+			ID:     dealerID,
 			Dealer: true,
 		},
 		Rounds:       1,
@@ -81,8 +86,7 @@ func Players(n int) func(game Game) Game {
 
 	return func(game Game) Game {
 
-		// @NOTE(mzalla) Reserves 0 for Dealer's ID
-		for i := 1; i < n+1; i++ {
+		for i := minPlayerID; i < n+1; i++ {
 			game.Players = append(game.Players, &player{
 				ID: i,
 			})
@@ -250,7 +254,7 @@ func playTurnAsPlayer(game *Game, p *player) int {
 
 	var choice string
 
-	for score > 0 && score != maxScore {
+	for score != bustScore && score != maxScore {
 
 		showHand(p)
 
@@ -292,7 +296,7 @@ func playTurnAsDealer(game *Game, d *player) int {
 
 	score := getScore(d)
 
-	for score > 0 && (score < dealerSoftHitLimit || getMinScore(d) < dealerSoftHitLimit) {
+	for score != bustScore && (score < dealerSoftHitLimit || getMinScore(d) < dealerSoftHitLimit) {
 
 		fmt.Printf("\t%s hits.\n", d)
 

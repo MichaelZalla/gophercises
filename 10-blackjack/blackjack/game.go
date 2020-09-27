@@ -76,6 +76,8 @@ func NewGame(options ...GameOptionFn) Game {
 		fmt.Printf("Winner IDs for Round %d: %v (top score: %d)\n", i+1, r.Winners, r.TopScore)
 	}
 
+	fmt.Println()
+
 	// Return the completed game
 
 	return game
@@ -257,17 +259,16 @@ func playTurnAsPlayer(game *Game, p *player) int {
 	fmt.Printf("%s's turn...\n", p)
 
 	defer fmt.Println()
-	defer showHand(p)
 
 	score := getScore(p)
+
+	showHand(p)
 
 	var choice string
 
 	for score != bustScore && score != maxScore {
 
-		showHand(p)
-
-		fmt.Printf("\tWill you hit (h), or stand (s)?\n\t")
+		fmt.Printf("\tWill you (h)it or (s)tand?\n\t")
 		fmt.Scanln(&choice)
 
 		switch choice {
@@ -279,6 +280,8 @@ func playTurnAsPlayer(game *Game, p *player) int {
 			p.Score = getScore(p)
 
 			score = p.Score
+
+			showHand(p)
 
 		case "s":
 
@@ -292,16 +295,23 @@ func playTurnAsPlayer(game *Game, p *player) int {
 
 	}
 
+	if score == maxScore {
+		fmt.Println("\tYou have Blackjack!")
+	} else if score == bustScore {
+		fmt.Println("\tYou went bust!")
+	}
+
 	return score
 
 }
 
 func playTurnAsDealer(game *Game, d *player) int {
 
+	defer fmt.Println()
+
 	fmt.Printf("%s's turn...\n", d)
 
-	defer fmt.Println()
-	defer showHand(d)
+	showHand(d)
 
 	for d.Score != bustScore && d.Score < maxScore && (d.Score < dealerSoftHitLimit || getMinScore(d) < dealerSoftHitLimit) {
 

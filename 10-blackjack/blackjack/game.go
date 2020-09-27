@@ -44,6 +44,7 @@ func NewGame(options ...GameOptionFn) Game {
 			ID:     dealerID,
 			Dealer: true,
 		},
+		Players:      []*player{},
 		Rounds:       1,
 		CurrentRound: 1,
 	}
@@ -88,7 +89,8 @@ func Players(n int) func(game Game) Game {
 
 		for i := minPlayerID; i < n+1; i++ {
 			game.Players = append(game.Players, &player{
-				ID: i,
+				ID:     i,
+				Dealer: false,
 			})
 		}
 

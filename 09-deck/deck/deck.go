@@ -13,17 +13,17 @@ type FilterFn = func([]Card) []Card
 // no filters are passed, New defaults to using the WithStandard filter.
 func New(filters ...FilterFn) []Card {
 
-	d := []Card{}
+	deck := []Card{}
 
 	if len(filters) == 0 {
 		filters = append(filters, WithStandard())
 	}
 
-	for _, o := range filters {
-		d = o(d)
+	for _, f := range filters {
+		deck = f(deck)
 	}
 
-	return d
+	return deck
 
 }
 

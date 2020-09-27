@@ -220,8 +220,8 @@ func getRoundWinners(game *Game) ([]*player, int) {
 
 	// If all players went bust that round, Dealer wins!
 
-	if sumPlayerScoreAfterRound == 0 {
-		return []*player{game.Dealer}, getScore(game.Dealer)
+	if sumPlayerScoreAfterRound < 0 {
+		return []*player{game.Dealer}, game.Dealer.Score
 	}
 
 	// Dealer plays a turn

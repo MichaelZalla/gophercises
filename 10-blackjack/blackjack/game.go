@@ -289,7 +289,7 @@ func playTurnAsDealer(game *Game, d *player) int {
 
 	score := getScore(d)
 
-	for score > 0 && (score < dealerSoftHitLimit || score == dealerSoftHitLimit && hasAce(d)) {
+	for score > 0 && (score < dealerSoftHitLimit || getMinScore(d) < dealerSoftHitLimit) {
 
 		fmt.Printf("\t%s hits.\n", d)
 

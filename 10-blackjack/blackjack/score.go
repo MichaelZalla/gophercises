@@ -6,49 +6,50 @@ func hasAce(p *player) bool {
 	return (p.Hand[0].Rank == deck.Ace || p.Hand[1].Rank == deck.Ace)
 }
 
-func getScore(p *player) int {
+func min(a, b int) int {
 
-	soft := false
+	if a <= b {
+		return a
+	}
 
-Tally:
+	return b
+
+}
+
+func getMinScore(p *player) int {
 
 	score := 0
 
 	for _, c := range p.Hand {
-		score += getValue(c, soft)
-	}
-
-	if score > maxScore {
-
-		if !soft {
-			soft = true
-			goto Tally
-		}
-
-		return -1
-
+		score += min(int(c.Rank), 10)
 	}
 
 	return score
 
 }
 
-func getValue(c deck.Card, soft bool) int {
+func getScore(p *player) int {
 
-	switch c.Rank {
-	case deck.Ace:
-		if soft {
-			return 1
+	score := getMinScore(p)
+
+	if score <= 11 {
+
+		// We can count any Aces as 11 to increase our score, but, if we have 2
+		// Aces, counting both as 11 would put us over the max score limit;
+		// therefore, double-Aces would be counted as 1+11=12
+
+		for _, c := range p.Hand {
+			if c.Rank == deck.Ace {
+				score += 10
+			}
 		}
-		return 11
-	case deck.Jack:
-		fallthrough
-	case deck.Queen:
-		fallthrough
-	case deck.King:
-		return 10
-	default:
-		return int(c.Rank) + 1
+
 	}
+
+	if score > maxScore {
+		return bustScore
+	}
+
+	return score
 
 }

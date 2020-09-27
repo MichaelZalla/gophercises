@@ -7,7 +7,6 @@ import (
 	"github.com/MichaelZalla/gophercises/09-deck/deck"
 )
 
-// round stores information about a particular game round, including the winners
 type round struct {
 	Winners  []int
 	TopScore int

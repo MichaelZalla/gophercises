@@ -300,9 +300,7 @@ func playTurnAsDealer(game *Game, d *player) int {
 	defer fmt.Println()
 	defer showHand(d)
 
-	score := getScore(d)
-
-	for score != bustScore && (score < dealerSoftHitLimit || getMinScore(d) < dealerSoftHitLimit) {
+	for d.Score != bustScore && (d.Score < dealerSoftHitLimit || getMinScore(d) < dealerSoftHitLimit) {
 
 		fmt.Printf("\t%s hits.\n", d)
 
@@ -310,12 +308,12 @@ func playTurnAsDealer(game *Game, d *player) int {
 
 		showHand(d)
 
-		score = getScore(d)
+		d.Score = getScore(d)
 
 	}
 
 	fmt.Printf("\t%s stands.\n", d)
 
-	return score
+	return d.Score
 
 }

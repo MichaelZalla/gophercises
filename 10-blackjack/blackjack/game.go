@@ -170,9 +170,9 @@ func deal(game *Game, p *player, n int) {
 	}
 
 	for i := 0; i < n; i++ {
-		front, back := game.Deck[0:n], game.Deck[n:]
-		p.Hand = append(p.Hand, front...)
-		game.Deck = back
+		top, bottom := game.Deck[0:n], game.Deck[n:]
+		p.Hand = append(p.Hand, top...)
+		game.Deck = bottom
 	}
 
 }

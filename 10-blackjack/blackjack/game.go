@@ -193,6 +193,10 @@ func getRoundWinners(game *Game) ([]*player, int) {
 
 		p.Score = getScore(p)
 
+		if p.Dealer {
+			continue
+		}
+
 		if int(p.Score) == maxScore {
 			winners = append(winners, p)
 		}

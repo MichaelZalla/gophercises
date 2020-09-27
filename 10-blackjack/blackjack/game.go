@@ -231,7 +231,6 @@ func getRoundWinners(game *Game) ([]*player, int) {
 	// Determine the top score for the round
 
 	for _, p := range game.Players {
-		p.Score = getScore(p)
 		if p.Score > topScore {
 			topScore = p.Score
 		}

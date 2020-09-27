@@ -48,9 +48,9 @@ func WithStandard() FilterFn {
 
 }
 
-// WithoutCards takes a filter function and returns a new deck in which any
+// Difference takes a filter function and returns a new deck in which any
 // original cards matching the filter are removed.
-func WithoutCards(filterFn func(c Card) bool) FilterFn {
+func Difference(filterFn func(c Card) bool) FilterFn {
 
 	return func(deck []Card) []Card {
 

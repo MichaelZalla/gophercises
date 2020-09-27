@@ -39,7 +39,7 @@ func ExampleWithoutCards() {
 
 	faceCards := New(
 		WithStandard(),
-		WithoutCards(func(c Card) bool {
+		Difference(func(c Card) bool {
 			return c.Rank >= Two && c.Rank <= Ten
 		}))
 

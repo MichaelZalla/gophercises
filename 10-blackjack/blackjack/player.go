@@ -18,6 +18,5 @@ func (p player) String() string {
 }
 
 func showHand(p *player) {
-	fmt.Printf("\tScore: %d\n", getScore(p))
-	fmt.Printf("\t%v\n", p.Hand)
+	fmt.Printf("\t(Score: %d) %v\n", getScore(p), p.Hand)
 }

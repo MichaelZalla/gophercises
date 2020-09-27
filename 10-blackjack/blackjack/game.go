@@ -135,6 +135,10 @@ func playRound(game *Game) {
 	fmt.Printf("\tStarting round #%d\n", game.CurrentRound)
 	fmt.Printf("==========================================\n\n")
 
+	fmt.Printf("%s's hand: \n", game.Dealer)
+	fmt.Printf("\t(Score: ???) { %s, **HIDDEN ** }\n", game.Dealer.Hand[0])
+	fmt.Printf("\n")
+
 	winners, topScore := getRoundWinners(game)
 
 	var winnerIDs []int

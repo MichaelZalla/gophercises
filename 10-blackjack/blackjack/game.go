@@ -34,10 +34,10 @@ const bustScore = -1
 
 const dealerSoftHitLimit = 17
 
-// NewGame creates a new game of Blackjack
+// NewGame creates a new game of Blackjack with the given options applied
 func NewGame(options ...GameOptionFn) Game {
 
-	// Generate a Deck and a Dealer (who serves as Player 0)
+	// Make a Deck and a Dealer (who serves as Player 0)
 
 	game := Game{
 		Dealer: &player{
@@ -82,7 +82,7 @@ func NewGame(options ...GameOptionFn) Game {
 
 }
 
-// Players adds the given number of players to a game (excludes the dealer)
+// Players adds the given number of players to a game (excludes the Dealer)
 func Players(n int) func(game Game) Game {
 
 	return func(game Game) Game {
@@ -147,6 +147,8 @@ func playRound(game *Game) {
 
 	winners, topScore := getRoundWinners(game)
 
+	// Rounds in our Game's History store the IDs of the round's winners
+
 	var winnerIDs []int
 
 	for _, p := range winners {
@@ -163,6 +165,7 @@ func playRound(game *Game) {
 	// Print a summary of the round
 
 	fmt.Printf("Round winners (top score: %d):\n", topScore)
+
 	for _, p := range winners {
 		fmt.Printf("\t%s\n", p)
 	}
@@ -228,7 +231,8 @@ func getRoundWinners(game *Game) ([]*player, int) {
 
 	topScore := playTurnAsDealer(game, game.Dealer)
 
-	// Determine the top score for the round
+	// At this point, every participant has played their turn; determine the top
+	// score for the round
 
 	for _, p := range game.Players {
 		if p.Score > topScore {
@@ -236,7 +240,7 @@ func getRoundWinners(game *Game) ([]*player, int) {
 		}
 	}
 
-	// Determine which Player(s) took the top score
+	// Determine which participants scored the top score
 
 	for _, p := range game.Players {
 		if p.Score == topScore {
